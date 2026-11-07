@@ -1,0 +1,6 @@
+# Source, evidence and contract hashes use raw bytes. Preserve reviewed bytes
+# across Git staging/checkouts, regardless of core.autocrlf on each platform.
+* -text
+
+*.png binary
+*.jpg binary

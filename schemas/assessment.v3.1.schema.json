@@ -1,0 +1,750 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:project-assurance:assessment:3.1",
+  "title": "Project assurance research or validation report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "catalog_version",
+    "project_id",
+    "phase",
+    "run",
+    "snapshot",
+    "authorization_ref",
+    "assigned_control_ids",
+    "controls",
+    "findings",
+    "evidence",
+    "validation_checks",
+    "limitations",
+    "gate_recommendation",
+    "manifest_hash"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "3.1"
+    },
+    "catalog_version": {
+      "const": "3.1.0"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "phase": {
+      "enum": [
+        "research",
+        "validation"
+      ]
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "assessor",
+        "model_requested",
+        "model_actual",
+        "started_at",
+        "completed_at"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assessor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model_requested": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "model_actual": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completed_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "source_revision",
+        "deployment",
+        "environment",
+        "profile_ref"
+      ],
+      "properties": {
+        "repository": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "deployment": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "environment": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "profile_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "authorization_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assigned_control_ids": {
+      "$ref": "#/$defs/controlIds"
+    },
+    "controls": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/controlResult"
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
+    },
+    "validation_checks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/check"
+      }
+    },
+    "limitations": {
+      "$ref": "#/$defs/strings"
+    },
+    "gate_recommendation": {
+      "enum": [
+        "needs_validation",
+        "blocked",
+        "needs_review",
+        "eligible_for_owner_review"
+      ]
+    },
+    "manifest_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "phase": {
+            "const": "research"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "gate_recommendation": {
+            "const": "needs_validation"
+          },
+          "validation_checks": {
+            "maxItems": 0
+          },
+          "controls": {
+            "items": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "not_assessed",
+                    "not_applicable",
+                    "needs_evidence",
+                    "candidate_gap"
+                  ]
+                }
+              }
+            }
+          },
+          "findings": {
+            "items": {
+              "properties": {
+                "outcome": {
+                  "const": "candidate"
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "gate_recommendation": {
+            "enum": [
+              "blocked",
+              "needs_review",
+              "eligible_for_owner_review"
+            ]
+          },
+          "findings": {
+            "items": {
+              "properties": {
+                "outcome": {
+                  "enum": [
+                    "confirmed",
+                    "refuted",
+                    "inconclusive"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "strings": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "controlIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z0-9_]*-[0-9]{2,}$"
+      }
+    },
+    "evidenceIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "controlResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "control_id",
+        "status",
+        "applicability",
+        "rationale",
+        "evidence_ids",
+        "finding_ids",
+        "remaining_validation",
+        "assessed_at",
+        "valid_until",
+        "coverage"
+      ],
+      "properties": {
+        "control_id": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*-[0-9]{2,}$"
+        },
+        "status": {
+          "enum": [
+            "not_assessed",
+            "not_applicable",
+            "needs_evidence",
+            "candidate_gap",
+            "validated_gap",
+            "validated_pass"
+          ]
+        },
+        "applicability": {
+          "enum": [
+            "applicable",
+            "not_applicable",
+            "unknown"
+          ]
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        },
+        "finding_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        },
+        "remaining_validation": {
+          "$ref": "#/$defs/strings"
+        },
+        "assessed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "valid_until": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "coverage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "positive_check_ids",
+            "negative_check_ids",
+            "negative_not_applicable_reason",
+            "exclusion_check_ids"
+          ],
+          "properties": {
+            "positive_check_ids": {
+              "$ref": "#/$defs/evidenceIds"
+            },
+            "negative_check_ids": {
+              "$ref": "#/$defs/evidenceIds"
+            },
+            "negative_not_applicable_reason": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            },
+            "exclusion_check_ids": {
+              "$ref": "#/$defs/evidenceIds"
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "not_applicable"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "applicability": {
+                "const": "not_applicable"
+              },
+              "evidence_ids": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "validated_pass",
+                  "validated_gap"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "applicability": {
+                "const": "applicable"
+              },
+              "evidence_ids": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "validated_pass"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "valid_until": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "remaining_validation": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "candidate_gap",
+                  "validated_gap"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "finding_ids": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "fingerprint",
+        "prior_finding_ids",
+        "control_ids",
+        "title",
+        "asset",
+        "claim",
+        "impact",
+        "preconditions",
+        "evidence_ids",
+        "counterevidence",
+        "uncertainty",
+        "severity",
+        "severity_basis",
+        "confidence",
+        "confidence_basis",
+        "bucket",
+        "validation_plan",
+        "outcome",
+        "outcome_rationale",
+        "legal_context"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fingerprint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "prior_finding_ids": {
+          "$ref": "#/$defs/strings"
+        },
+        "control_ids": {
+          "$ref": "#/$defs/controlIds"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claim": {
+          "type": "string",
+          "minLength": 1
+        },
+        "impact": {
+          "type": "string",
+          "minLength": 1
+        },
+        "preconditions": {
+          "$ref": "#/$defs/strings"
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        },
+        "counterevidence": {
+          "$ref": "#/$defs/strings"
+        },
+        "uncertainty": {
+          "$ref": "#/$defs/strings"
+        },
+        "severity": {
+          "enum": [
+            "critical",
+            "high",
+            "medium",
+            "low",
+            "informational",
+            "unassessed"
+          ]
+        },
+        "severity_basis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "confidence": {
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "unassessed"
+          ]
+        },
+        "confidence_basis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bucket": {
+          "enum": [
+            "potential_release_blocker",
+            "pre_launch_remediation",
+            "later_improvement",
+            "evidence_request"
+          ]
+        },
+        "validation_plan": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "enum": [
+            "candidate",
+            "confirmed",
+            "refuted",
+            "inconclusive"
+          ]
+        },
+        "outcome_rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "legal_context": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "jurisdictions",
+            "applicability_facts",
+            "unresolved_facts",
+            "authority_type",
+            "source_evidence_ids"
+          ],
+          "properties": {
+            "jurisdictions": {
+              "$ref": "#/$defs/strings"
+            },
+            "applicability_facts": {
+              "$ref": "#/$defs/strings"
+            },
+            "unresolved_facts": {
+              "$ref": "#/$defs/strings"
+            },
+            "authority_type": {
+              "enum": [
+                "law",
+                "contract",
+                "platform_rule",
+                "guidance",
+                "internal_policy",
+                "undetermined"
+              ]
+            },
+            "source_evidence_ids": {
+              "$ref": "#/$defs/evidenceIds"
+            }
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "locator",
+        "captured_at",
+        "snapshot",
+        "environment",
+        "summary",
+        "limitations",
+        "artifact"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "enum": [
+            "source",
+            "configuration",
+            "runtime",
+            "organizational",
+            "primary_source"
+          ]
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "captured_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "snapshot": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "environment": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limitations": {
+          "$ref": "#/$defs/strings"
+        },
+        "artifact": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        }
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "control_ids",
+        "method",
+        "authorization_ref",
+        "expected",
+        "actual",
+        "result",
+        "evidence_ids",
+        "cleanup",
+        "finding_ids",
+        "state",
+        "executed_at"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "control_ids": {
+          "$ref": "#/$defs/controlIds"
+        },
+        "method": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorization_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actual": {
+          "type": "string",
+          "minLength": 1
+        },
+        "result": {
+          "enum": [
+            "supports_pass",
+            "supports_gap",
+            "inconclusive"
+          ]
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        },
+        "cleanup": {
+          "enum": [
+            "not_required",
+            "completed",
+            "incomplete"
+          ]
+        },
+        "finding_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        },
+        "state": {
+          "enum": [
+            "planned",
+            "attempted",
+            "executed",
+            "skipped",
+            "inconclusive"
+          ]
+        },
+        "executed_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "project-assurance",
+  "version": "3.3.1",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "description": "Code Crusader: evidence-first engineering reviews for code quality, security, and repository hygiene",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test",
+    "check": "node bin/assurance.mjs catalog",
+    "verify": "node tools/verify.mjs"
+  }
+}

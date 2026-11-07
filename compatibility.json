@@ -1,0 +1,74 @@
+{
+  "policy": "Historical v1/v2/v3.0/v3.1/v3.2 bytes remain pinned. v3.3 supports only explicit unchanged research carry-forward from an original v3.1/v3.2/v3.3 report; never validation credit. Changed control requirements require fresh assessment.",
+  "files": [
+    {
+      "path": "catalog/v2.0.0.json",
+      "sha256": "a37f4dbce37d3d79cfdc1adc42ecd39acfa71aa11906da8a5c97efeb68de2e31"
+    },
+    {
+      "path": "sets/v2.0.0.json",
+      "sha256": "9035a0e8594b020f6302421db18e820a4ae7b3fd50eef6b9554f9584840135a0"
+    },
+    {
+      "path": "schemas/assessment.v2.schema.json",
+      "sha256": "e1bae559897682deccb477274860bde31a82ce64fba5e6512e7c7792d238f5f5"
+    },
+    {
+      "path": "schemas/manifest.v2.schema.json",
+      "sha256": "35e6032095b43eea6f0dd50b107c714ffb8174930c2e7ac900e3397b4609df50"
+    },
+    {
+      "path": "catalog/v3.0.0.json",
+      "sha256": "47c97042a2a4afcf9eb835b2860a61c4e6494d198257b48f50e649046ae30e14"
+    },
+    {
+      "path": "sets/v3.0.0.json",
+      "sha256": "3a0daa85e9026c0a043466a380f69cbe4434a256651d8598c2b05267e247d8b6"
+    },
+    {
+      "path": "schemas/assessment.v3.schema.json",
+      "sha256": "378fb0a30cd791a3cdfffeb0a967be6315b392b8588e282d8a27199dc4be4cf0"
+    },
+    {
+      "path": "schemas/manifest.v3.schema.json",
+      "sha256": "e86c61b53c2f888e2b53ac71296c97ee575ada3800c0a570168026d7020aa54f"
+    },
+    {
+      "path": "catalog/v3.1.0.json",
+      "sha256": "baf3e04a1b5988754ee53bcbc4aadd01a8813a26dc46d9e664349a19fcdcaa83"
+    },
+    {
+      "path": "sets/v3.1.0.json",
+      "sha256": "b066a51a315e4be725c1f893ffb9bb518242024f641c2df0335853308b025632"
+    },
+    {
+      "path": "schemas/assessment.v3.1.schema.json",
+      "sha256": "3611842888c0011a342f28319695d08e621a17a9ef515528f30475c5e677e71a"
+    },
+    {
+      "path": "schemas/manifest.v3.1.schema.json",
+      "sha256": "d6d33787438991c5fdd84c59eac7a6603a2a2e30ff49bfe63ff6141369ecf7de"
+    },
+    {
+      "path": "catalog/v3.2.0.json",
+      "sha256": "9db07eb3d23f64e629d5d24206ac3b58e86c74b2791628f7755552f23258caf2"
+    },
+    {
+      "path": "sets/v3.2.0.json",
+      "sha256": "839bd913320f3602b5be711e8c74f592f65db0562ea5dd962f012c3afa73125f"
+    },
+    {
+      "path": "schemas/assessment.v3.2.schema.json",
+      "sha256": "c21a4d09e22afe48d69b25a62ce73a26ff4fbf097f17f7a9416675f08edb9fe3"
+    },
+    {
+      "path": "schemas/manifest.v3.2.schema.json",
+      "sha256": "9047aefeb0644cd1f78f687a2a789206c6ff5a666748a1de2c883db7ccc3cb58"
+    }
+  ],
+  "previous_versions": [
+    "2.0.0",
+    "3.0.0",
+    "3.1.0"
+  ]
+}
