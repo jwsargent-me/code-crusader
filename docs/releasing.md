@@ -5,7 +5,7 @@ Publish only the reviewed snapshot and history. A release, push, visibility chan
 ## Prepare the candidate
 
 1. Review the diff for source, current contracts, docs and assets. Keep private assessments, evidence, credentials, local paths, logs and concept galleries outside the distribution. Review every commit that would be published, not only the working tree.
-2. Validate the four current contracts directly. Version catalog content, named sets, record format and package releases independently. Keep schema paths stable; adding a control does not create a schema version. Use Git for historical sources instead of bundling snapshots. Document unsupported record formats and require replanning when contract/engine hashes change; technical `project-assurance` identifiers require a compatibility plan before renaming.
+2. Validate the four current contracts directly. Update release labels when preparing a release; control edits need no version bump. Change record-format versions only for structural changes and keep schema paths stable. Content hashes identify exact control/set revisions. Use Git for historical sources instead of bundling snapshots. Document unsupported record formats and require replanning when contract/engine hashes change; technical `project-assurance` identifiers require a compatibility plan before renaming.
 3. Confirm redistribution rights and preserve the MIT License and applicable third-party notices. Keep `private: true` in package.json unless npm publication is separately authorized.
 4. Verify a fresh checkout without installed dependencies:
 

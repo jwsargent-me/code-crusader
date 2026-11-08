@@ -1,6 +1,6 @@
 # Operating contract
 
-The CLI is a standalone record/evidence validator and assessment aid, independent of plugins, skills and model providers. Current control data is in `catalog/controls.json`, named sets in `catalog/sets.json`, and the record structures in `schemas/manifest.json` and `schemas/assessment.json`. Catalog content and record-format versions are independent. Control IDs are checked against current catalog data, not enumerated into schemas. Module membership is derived from each control’s `module_id`; the `all` set includes every control.
+The CLI is a standalone record/evidence validator and assessment aid, independent of plugins, skills and model providers. Current control data is in `catalog/controls.json`, named sets in `catalog/sets.json`, and the record structures in `schemas/manifest.json` and `schemas/assessment.json`. Schemas define structure; controls supply requirements. Control additions and edits need no schema edit or version bump; content hashes identify the exact data. Record-format versions change for structural changes. Control IDs are checked against current catalog data, not enumerated into schemas. Module membership is derived from each control’s `module_id`; the `all` set includes every control.
 
 ## Scope and authorization
 

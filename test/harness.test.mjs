@@ -159,7 +159,7 @@ test('catalog and report version labels must match the actual frozen contracts',
   assert.ok(errors(wrongReport).includes('Report scope mismatch'));
 });
 
-test('adding one control requires only catalog data and preserves both record schemas', () => {
+test('adding one control needs only catalog data with no schema or version changes', () => {
   const fixture = mkdtempSync(join(tmpdir(), 'assurance-contribution-'));
   try {
     for (const dir of ['src', 'bin', 'catalog', 'schemas']) cpSync(join(packageRoot, dir), join(fixture, dir), { recursive: true });
@@ -182,13 +182,12 @@ test('adding one control requires only catalog data and preserves both record sc
     control.id = `A-${String(nextId).padStart(2, '0')}`;
     control.title = 'Synthetic contribution fixture';
     definition.controls.push(control);
-    const [, major, minor, patch] = /^(\d+)\.(\d+)\.(\d+)/.exec(definition.catalog_version);
-    definition.catalog_version = `${major}.${minor}.${Number(patch) + 1}`;
     writeFileSync(dataPath, JSON.stringify(definition, null, 2) + '\n');
     assert.equal(JSON.parse(run(['catalog'])).controls, definition.controls.length);
     for (const selector of [control.id, 'A', 'all']) assert.ok(JSON.parse(run(['list', '--select', selector])).some(item => item.id === control.id));
     const bundle = JSON.parse(run([...planning, '--select', control.id, '--mode', 'validation', '--validity-days', '1', '--validity-policy', 'synthetic-policy']));
     const { manifest: m, report: r } = bundle, at = m.created_at;
+    assert.equal(m.catalog_version, previous.manifest.catalog_version);
     assert.equal(m.schema_hash, previous.manifest.schema_hash);
     assert.equal(m.schema_version, previous.manifest.schema_version);
     assert.equal(m.engine_hash, previous.manifest.engine_hash);
