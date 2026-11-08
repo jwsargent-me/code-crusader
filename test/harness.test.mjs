@@ -1,11 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync, readFileSync, mkdirSync, symlinkSync, rmSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, readFileSync, mkdirSync, symlinkSync, rmSync, cpSync, readdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve, relative, isAbsolute, basename } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { catalog, load, hash, select, plan, snapshot, checkBundle, manifestErrors, catalogErrors, applicability, summarize } from '../src/core.mjs';
+import { catalog, sets, hash, select, plan, snapshot, checkBundle, manifestErrors, catalogErrors, applicability, summarize } from '../src/core.mjs';
 import { validTime, schemaErrors } from '../src/shape.mjs';
 import { inspectGit, trackedFiles } from '../src/git.mjs';
 import { renderReport } from '../src/report.mjs';
@@ -71,22 +71,15 @@ test('research carry-forward preserves exact original facts, evidence and timest
   assert.ok(readable.includes('original timestamps')); assert.ok(readable.includes('Historical source: prior'));
   assert.throws(() => renderReport(bundle, [], { controlIds: ['C-01'] }));
 });
-test('unchanged original v3.2 research can be referenced without migration or validation credit', () => {
+test('unsupported historical research formats are rejected without archive dependencies', () => {
   const { bundle, original, path } = carryFixture();
-  original.manifest.schema_version = '3.2'; original.manifest.catalog_version = '3.2.0';
-  original.manifest.catalog_hash = hash(load('catalog/v3.2.0.json'));
-  original.manifest.sets_hash = hash(load('sets/v3.2.0.json'));
-  original.manifest.schema_hash = hash({ manifestSchema: load('schemas/manifest.v3.2.schema.json'), reportSchema: load('schemas/assessment.v3.2.schema.json') });
-  delete original.manifest.purpose;
-  original.report.schema_version = '3.2'; original.report.catalog_version = '3.2.0';
-  delete original.report.harness_feedback;
+  original.manifest.schema_version = '3.2'; original.report.schema_version = '3.2';
   original.report.manifest_hash = hash(original.manifest);
   writeFileSync(join(root, path), JSON.stringify(original));
   bundle.report.evidence.find(item => item.id === 'prior').artifact.sha256 = hash(readFileSync(join(root, path)));
-  assert.deepEqual(checkBundle(bundle, { root, evidenceRoot: root, now }), []);
-  assert.equal(bundle.report.controls[0].status, 'needs_evidence');
-  assert.equal(summarize(bundle, []).assessment_complete, false);
+  assert.ok(checkBundle(bundle, { root, evidenceRoot: root, now }).length);
 });
+
 for (const [name, mutate] of Object.entries({
   'rewritten old assessment date': ({ bundle }) => { bundle.report.controls[0].assessed_at = bundle.manifest.created_at; },
   'validation use of historical research': ({ bundle }) => { bundle.manifest.mode = 'validation'; bundle.report.phase = 'validation'; bundle.report.gate_recommendation = 'needs_review'; bundle.report.manifest_hash = hash(bundle.manifest); },
@@ -102,22 +95,122 @@ for (const [name, mutate] of Object.entries({
   fixture.bundle.report.evidence.find(item => item.id === 'prior').artifact.sha256 = hash(readFileSync(join(root, fixture.path)));
   assert.ok(checkBundle(fixture.bundle, { root, evidenceRoot: root, now }).length);
 });
-test('baseline bytes remain pinned and new catalog has stable original IDs', () => {
-  for (const entry of load('provenance.json').files) assert.equal(hash(readFileSync(new URL('../' + entry.copied_to, import.meta.url))), entry.sha256);
+test('current authoring contracts are valid and preserve security defaults', () => {
   assert.deepEqual(catalogErrors(), []);
-  for (const control of load('baseline/v1.0.0/catalog.json').controls) assert.ok(catalog.controls.some(item => item.id === control.id));
-  assert.equal(catalog.controls.length, 144);
-  for (const control of catalog.controls) if (control.false_positive_guidance) assert.ok(!control.false_positive_guidance.startsWith('undefined '));
+  for (const control of catalog.controls) {
+    assert.equal(control.research.permitted_mode, 'read_only');
+    assert.equal(control.failure_significance.default_gate, 'needs_review');
+    if (control.false_positive_guidance) assert.ok(!control.false_positive_guidance.startsWith('undefined '));
+  }
   assert.equal(catalog.controls.find(item => item.id === 'F-09').validation.negative_case_required, true);
-  for (const entry of load('compatibility.json').files) assert.equal(hash(readFileSync(new URL('../' + entry.path, import.meta.url))), entry.sha256);
-  const generated = spawnSync(process.execPath, ['tools/build-contracts.mjs', '--check'], { cwd: packageRoot, encoding: 'utf8' });
-  assert.equal(generated.status, 0, generated.stderr);
 });
+
 test('selectors resolve modules, sets, unions and exclusions in catalog order', () => {
-  assert.equal(select(['C']).length, 8);
-  assert.deepEqual(select(['C', 'C-01'], ['C-02']), ['C-01', 'C-03', 'C-04', 'C-05', 'C-06', 'C-07', 'C-08']);
+  const moduleIds = catalog.controls.filter(item => item.module_id === 'C').map(item => item.id);
+  assert.deepEqual(select(['C']), moduleIds);
+  assert.deepEqual(select(['C', 'C-01'], ['C-02']), moduleIds.filter(id => id !== 'C-02'));
   assert.ok(select(['repository-hygiene']).includes('Q-04'));
   for (const [selectors, excluded] of [[[], []], [['bad'], []], [['C'], ['B']], [['C'], ['C']], [['__proto__'], []]]) assert.throws(() => select(selectors, excluded));
+});
+
+for (const [name, mutate] of Object.entries({
+  'duplicate control ID': data => data.controls.push(copy(data.controls[0])),
+  'unknown module': data => { data.controls[0].module_id = 'MISSING'; },
+  'unknown feature': data => { data.controls[0].applicability.any_of = ['missing-feature']; },
+  'missing research method': data => { delete data.controls[0].research; },
+  'missing validation': data => { delete data.controls[0].validation; },
+  'missing negative-case policy': data => { delete data.controls[0].validation.negative_case_required; },
+  'unknown guidance reference': data => { data.controls[0].reference_ids = ['missing-reference']; },
+  'inherited freshness policy': data => { data.controls[0].freshness.policy_ref = '__proto__'; },
+  'unsafe default pass': data => { data.controls[0].failure_significance.default_gate = 'eligible_for_owner_review'; },
+  'misspelled control field': data => { data.controls[0].validaton = copy(data.controls[0].validation); },
+  'duplicated module membership': data => { data.modules[0].control_ids = ['A-01']; },
+  'malformed control': data => { data.controls[0] = null; },
+  'invalid catalog version': data => { data.catalog_version = ''; },
+  'dangling set selector': (_data, groups) => { groups.sets.extra = ['MISSING']; },
+  'catalog-coupled sets': (data, groups) => { groups.catalog_version = data.catalog_version; }
+})) test('catalog authoring rejects ' + name, () => {
+  const definition = copy(catalog), groups = copy(sets);
+  mutate(definition, groups);
+  let result;
+  assert.doesNotThrow(() => { result = catalogErrors(definition, groups); });
+  assert.ok(result.length, name);
+});
+
+test('new modules and all-set coverage are derived from catalog data', () => {
+  const definition = copy(catalog);
+  let moduleId = 'EXTRA';
+  while (definition.modules.some(module => module.id === moduleId)) moduleId += '_X';
+  const controlId = moduleId + '-01';
+  definition.modules.push({ id: moduleId, title: 'Synthetic module', applicability: { any_of: ['all'] } });
+  definition.controls.push({ ...copy(definition.controls[0]), id: controlId, module_id: moduleId });
+  assert.deepEqual(catalogErrors(definition), []);
+  assert.deepEqual(select([moduleId], [], definition), [controlId]);
+  assert.ok(select(['all'], [], definition).includes(controlId));
+});
+
+test('catalog and report version labels must match the actual frozen contracts', () => {
+  const wrongManifest = make();
+  wrongManifest.manifest.catalog_version = '999.0.0';
+  wrongManifest.report.manifest_hash = hash(wrongManifest.manifest);
+  assert.ok(errors(wrongManifest).includes('Catalog version mismatch'));
+  const wrongReport = make();
+  wrongReport.report.catalog_version = '999.0.0';
+  assert.ok(errors(wrongReport).includes('Report scope mismatch'));
+});
+
+test('adding one control requires only catalog data and preserves both record schemas', () => {
+  const fixture = mkdtempSync(join(tmpdir(), 'assurance-contribution-'));
+  try {
+    for (const dir of ['src', 'bin', 'catalog', 'schemas']) cpSync(join(packageRoot, dir), join(fixture, dir), { recursive: true });
+    writeFileSync(join(fixture, 'app.js'), 'export const fixture = true;\n');
+    const schemaFiles = readdirSync(join(fixture, 'schemas')).sort();
+    const schemaHashes = schemaFiles.map(file => hash(readFileSync(join(fixture, 'schemas', file))));
+    const originalSets = readFileSync(join(fixture, 'catalog/sets.json'));
+    const run = (args, status = 0) => {
+      const result = spawnSync(process.execPath, ['bin/assurance.mjs', ...args], { cwd: fixture, encoding: 'utf8', timeout: 15000, maxBuffer: 8 * 1024 * 1024 });
+      assert.equal(result.status, status, result.stderr || result.stdout);
+      return result.stdout;
+    };
+    const planning = ['plan', '--root', fixture, '--files', 'app.js', '--project', 'contribution-fixture', '--authorization', 'synthetic-fixture'];
+    const previous = JSON.parse(run([...planning, '--select', 'A-01']));
+    const dataPath = join(fixture, 'catalog/controls.json');
+    const definition = JSON.parse(readFileSync(dataPath, 'utf8'));
+    let nextId = 1;
+    while (definition.controls.some(control => control.id === `A-${String(nextId).padStart(2, '0')}`)) nextId++;
+    const control = copy(definition.controls.find(item => item.id === 'A-01'));
+    control.id = `A-${String(nextId).padStart(2, '0')}`;
+    control.title = 'Synthetic contribution fixture';
+    definition.controls.push(control);
+    const [, major, minor, patch] = /^(\d+)\.(\d+)\.(\d+)/.exec(definition.catalog_version);
+    definition.catalog_version = `${major}.${minor}.${Number(patch) + 1}`;
+    writeFileSync(dataPath, JSON.stringify(definition, null, 2) + '\n');
+    assert.equal(JSON.parse(run(['catalog'])).controls, definition.controls.length);
+    for (const selector of [control.id, 'A', 'all']) assert.ok(JSON.parse(run(['list', '--select', selector])).some(item => item.id === control.id));
+    const bundle = JSON.parse(run([...planning, '--select', control.id, '--mode', 'validation', '--validity-days', '1', '--validity-policy', 'synthetic-policy']));
+    const { manifest: m, report: r } = bundle, at = m.created_at;
+    assert.equal(m.schema_hash, previous.manifest.schema_hash);
+    assert.equal(m.schema_version, previous.manifest.schema_version);
+    assert.equal(m.engine_hash, previous.manifest.engine_hash);
+    assert.notEqual(m.catalog_hash, previous.manifest.catalog_hash);
+    r.run.assessor = 'fixture-reviewer';
+    r.evidence = [{ id: 'proof', type: 'source', locator: 'app.js', captured_at: at, snapshot: m.snapshot.digest,
+      environment: null, summary: 'Synthetic record fixture.', limitations: [], artifact: { path: 'app.js', sha256: m.snapshot.files[0].sha256 } }];
+    Object.assign(r.controls[0], { status: 'validated_pass', applicability: 'applicable', rationale: 'Synthetic source inventory reconciled.',
+      evidence_ids: ['proof'], remaining_validation: [], valid_until: new Date(Date.parse(at) + 86400000).toISOString(),
+      coverage: { positive_check_ids: ['check'], negative_check_ids: [], negative_not_applicable_reason: 'Synthetic ownership inventory has no executable denial path.', exclusion_check_ids: [] } });
+    r.validation_checks = [{ id: 'check', control_ids: [control.id], finding_ids: [], state: 'executed', executed_at: at,
+      method: 'Read synthetic source fixture', authorization_ref: m.authorization_ref, expected: 'Synthetic source present', actual: 'Synthetic source present',
+      result: 'supports_pass', evidence_ids: ['proof'], cleanup: 'not_required' }];
+    r.gate_recommendation = 'eligible_for_owner_review';
+    writeFileSync(join(fixture, 'review.json'), JSON.stringify(bundle));
+    run(['verify', '--input', 'review.json', '--root', fixture, '--target', 'source', '--manifest-hash', hash(m)]);
+    writeFileSync(join(fixture, 'old.json'), JSON.stringify(previous));
+    run(['check', '--input', 'old.json', '--root', fixture], 1);
+    assert.deepEqual(readdirSync(join(fixture, 'schemas')).sort(), schemaFiles);
+    assert.deepEqual(schemaFiles.map(file => hash(readFileSync(join(fixture, 'schemas', file)))), schemaHashes);
+    assert.deepEqual(readFileSync(join(fixture, 'catalog/sets.json')), originalSets);
+  } finally { removeFixture(fixture); }
 });
 
 test('package verification rejects skipped, absent, ambiguous and failed test summaries', () => {

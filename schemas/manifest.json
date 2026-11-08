@@ -9,6 +9,7 @@
     "schema_hash",
     "engine_hash",
     "assessment_target",
+    "purpose",
     "git_snapshot",
     "id",
     "project_id",
@@ -27,10 +28,11 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "3.2"
+      "const": "3.3"
     },
     "catalog_version": {
-      "const": "3.2.0"
+      "type": "string",
+      "minLength": 1
     },
     "catalog_hash": {
       "type": "string",
@@ -52,6 +54,12 @@
       "enum": [
         "source",
         "runtime"
+      ]
+    },
+    "purpose": {
+      "enum": [
+        "project-assessment",
+        "harness-drill"
       ]
     },
     "git_snapshot": {
@@ -226,5 +234,5 @@
     }
   },
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:project-assurance:manifest:3.2"
+  "$id": "urn:project-assurance:manifest:3.3"
 }

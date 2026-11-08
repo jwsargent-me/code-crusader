@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:project-assurance:assessment:3.0",
+  "$id": "urn:project-assurance:assessment:3.3",
   "title": "Project assurance research or validation report",
   "type": "object",
   "additionalProperties": false,
@@ -19,14 +19,16 @@
     "validation_checks",
     "limitations",
     "gate_recommendation",
-    "manifest_hash"
+    "manifest_hash",
+    "harness_feedback"
   ],
   "properties": {
     "schema_version": {
-      "const": "3.0"
+      "const": "3.3"
     },
     "catalog_version": {
-      "const": "3.0.0"
+      "type": "string",
+      "minLength": 1
     },
     "project_id": {
       "type": "string",
@@ -167,6 +169,58 @@
     "manifest_hash": {
       "type": "string",
       "pattern": "^[a-f0-9]{64}$"
+    },
+    "harness_feedback": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "finding_ids",
+          "control_ids",
+          "category",
+          "observation",
+          "recommendation",
+          "validation_plan"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "finding_ids": {
+            "$ref": "#/$defs/evidenceIds"
+          },
+          "control_ids": {
+            "$ref": "#/$defs/controlIds"
+          },
+          "category": {
+            "enum": [
+              "missing_control",
+              "weak_method",
+              "false_positive_guidance",
+              "record_validator",
+              "reporting",
+              "workflow",
+              "evidence_gap",
+              "no_harness_change"
+            ]
+          },
+          "observation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "recommendation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "validation_plan": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
     }
   },
   "allOf": [
@@ -275,7 +329,8 @@
         "remaining_validation",
         "assessed_at",
         "valid_until",
-        "coverage"
+        "coverage",
+        "prior_assessment"
       ],
       "properties": {
         "control_id": {
@@ -348,6 +403,22 @@
             },
             "exclusion_check_ids": {
               "$ref": "#/$defs/evidenceIds"
+            }
+          }
+        },
+        "prior_assessment": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "report_evidence_id"
+          ],
+          "properties": {
+            "report_evidence_id": {
+              "type": "string",
+              "minLength": 1
             }
           }
         }

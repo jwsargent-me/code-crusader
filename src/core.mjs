@@ -6,10 +6,11 @@ import { inspectGit } from './git.mjs';
 
 const base = new URL('../', import.meta.url);
 export const load = name => JSON.parse(readFileSync(new URL(name, base), 'utf8'));
-export const catalog = load('catalog/v3.3.0.json');
-export const sets = load('sets/v3.3.0.json');
-export const reportSchema = load('schemas/assessment.v3.3.schema.json');
-export const manifestSchema = load('schemas/manifest.v3.3.schema.json');
+export const catalog = load('catalog/controls.json');
+export const sets = load('catalog/sets.json');
+export const reportSchema = load('schemas/assessment.json');
+export const manifestSchema = load('schemas/manifest.json');
+export const schemaVersion = manifestSchema.properties.schema_version.const;
 export function canonical(value) {
   if (Array.isArray(value)) return '[' + value.map(canonical).join(',') + ']';
   if (value && typeof value === 'object') return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + canonical(value[key])).join(',') + '}';
@@ -25,19 +26,19 @@ function gitDigest(root, base) {
   return hash(observation);
 }
 
-export function select(selectors, exclusions = []) {
+export function select(selectors, exclusions = [], definition = catalog, namedSets = sets) {
   if (!Array.isArray(selectors) || !selectors.length || !Array.isArray(exclusions)) throw new Error('Invalid selection');
-  const known = new Set(catalog.controls.map(control => control.id));
+  const known = new Set(definition.controls.map(control => control.id));
+  const members = moduleId => definition.controls.filter(control => control.module_id === moduleId).map(control => control.id);
   const expand = selector => {
     if (typeof selector !== 'string') throw new Error('Invalid selector');
     if (known.has(selector)) return [selector];
-    const module = catalog.modules.find(item => item.id === selector);
-    if (module) return module.control_ids;
-    if (Object.hasOwn(sets.sets, selector)) return sets.sets[selector].flatMap(item => {
+    if (definition.modules.some(module => module.id === selector)) return members(selector);
+    if (Object.hasOwn(namedSets.sets, selector)) return namedSets.sets[selector].flatMap(item => {
+      if (item === '*') return [...known];
       if (known.has(item)) return [item];
-      const found = catalog.modules.find(module => module.id === item);
-      if (!found) throw new Error('Invalid named set');
-      return found.control_ids;
+      if (!definition.modules.some(module => module.id === item)) throw new Error('Invalid named set');
+      return members(item);
     });
     throw new Error('Unknown selector');
   };
@@ -46,7 +47,7 @@ export function select(selectors, exclusions = []) {
     if (!included.has(id)) throw new Error('Exclusion outside selection');
     included.delete(id);
   }
-  const ids = catalog.controls.map(control => control.id).filter(id => included.has(id));
+  const ids = definition.controls.map(control => control.id).filter(id => included.has(id));
   if (!ids.length) throw new Error('Empty selection');
   return ids;
 }
@@ -85,12 +86,14 @@ export function snapshot(root, paths, metadata = {}) {
 
 export function plan({ root, paths, selectors, exclusions = [], projectId, authorizationRef,
   mode = 'review', purpose = 'project-assessment', assessmentTarget = 'source', gitBase, features = {}, validityDays = null, validityPolicyRef = null, metadata = {}, now = new Date().toISOString() }) {
+  const contractErrors = catalogErrors();
+  if (contractErrors.length) throw new Error('Invalid catalog: ' + contractErrors.join('; '));
   const assigned = select(selectors, exclusions);
   if (!features || typeof features !== 'object' || Array.isArray(features)) throw new Error('Features must be an object');
   if (Object.keys(features).some(key => !catalog.feature_keys.includes(key))) throw new Error('Unknown feature key');
   const resolvedFeatures = Object.fromEntries(catalog.feature_keys.map(key => [key, features[key] ?? null]));
   const manifest = {
-    schema_version: '3.3', catalog_version: catalog.catalog_version, assessment_target: assessmentTarget, engine_hash: engineHash(),
+    schema_version: schemaVersion, catalog_version: catalog.catalog_version, assessment_target: assessmentTarget, engine_hash: engineHash(),
     git_snapshot: gitBase ? { base_ref: gitBase, digest: gitDigest(root, gitBase) } : null,
     catalog_hash: hash(catalog), sets_hash: hash(sets), schema_hash: hash({ manifestSchema, reportSchema }),
     id: randomUUID(), project_id: projectId, mode, purpose, created_at: now,
@@ -105,7 +108,7 @@ export function plan({ root, paths, selectors, exclusions = [], projectId, autho
   const errors = manifestErrors(manifest, Date.parse(now));
   if (errors.length) throw new Error('Invalid planning contract: ' + errors.join('; '));
   const report = {
-    schema_version: '3.3', catalog_version: catalog.catalog_version, manifest_hash: hash(manifest),
+    schema_version: schemaVersion, catalog_version: catalog.catalog_version, manifest_hash: hash(manifest),
     project_id: projectId, phase: mode === 'review' ? 'research' : 'validation',
     run: { id: manifest.id, assessor: 'unassigned', model_requested: null, model_actual: null, started_at: now, completed_at: now },
     snapshot: { repository: manifest.snapshot.root, source_revision: manifest.snapshot.source_revision,
@@ -128,6 +131,7 @@ export function manifestErrors(manifest, now = Date.now()) {
   const errors = shapeErrors(manifest, manifestSchema);
   if (errors.length) return errors;
   const fail = message => errors.push(message);
+  if (manifest.catalog_version !== catalog.catalog_version) fail('Catalog version mismatch');
   if (manifest.assigned_control_ids.some(id => id.startsWith('P-')) && manifest.git_snapshot === null) fail('Git controls require a bound local Git observation');
   if (!same(Object.keys(manifest.features).sort(), [...catalog.feature_keys].sort())) fail('Feature coverage mismatch');
   if (manifest.catalog_hash !== hash(catalog) || manifest.sets_hash !== hash(sets)
@@ -155,7 +159,7 @@ export function checkBundle(bundle, { root, evidenceRoot, expectedManifestHash, 
   const fail = message => errors.push(message);
   if (expectedManifestHash !== undefined && expectedManifestHash !== hash(m)) fail('Approved manifest hash mismatch');
   if (r.manifest_hash !== hash(m)) fail('Report manifest binding mismatch');
-  if (r.project_id !== m.project_id || r.run.id !== m.id || r.authorization_ref !== m.authorization_ref
+  if (r.catalog_version !== m.catalog_version || r.project_id !== m.project_id || r.run.id !== m.id || r.authorization_ref !== m.authorization_ref
     || r.phase !== (m.mode === 'review' ? 'research' : 'validation') || !same(r.assigned_control_ids, m.assigned_control_ids)) fail('Report scope mismatch');
   if (!same(r.snapshot, { repository: m.snapshot.root, source_revision: m.snapshot.source_revision,
     deployment: m.snapshot.deployment, environment: m.snapshot.environment, profile_ref: hash(m.features) })) fail('Report snapshot mismatch');
@@ -211,11 +215,9 @@ export function checkBundle(bundle, { root, evidenceRoot, expectedManifestHash, 
       }
       const previous = priorReports.get(reference.id);
       const version = previous?.manifest?.schema_version;
-      if (!['3.1', '3.2', '3.3'].includes(version)) return false;
-      const previousReportSchema = version === '3.3' ? reportSchema : load(`schemas/assessment.v${version}.schema.json`);
-      const previousManifestSchema = version === '3.3' ? manifestSchema : load(`schemas/manifest.v${version}.schema.json`);
-      const previousCatalog = version === '3.3' ? catalog : load(`catalog/v${version}.0.json`);
-      const previousSets = version === '3.3' ? sets : load(`sets/v${version}.0.json`);
+      if (version !== schemaVersion) return false;
+      const previousReportSchema = reportSchema, previousManifestSchema = manifestSchema;
+      const previousCatalog = catalog, previousSets = sets;
       if (shapeErrors(previous.report, previousReportSchema).length || shapeErrors(previous.manifest, previousManifestSchema).length) return false;
       const old = previous.report;
       if (old.phase !== 'research' || previous.manifest.mode !== 'review' || old.gate_recommendation !== 'needs_validation'
@@ -319,24 +321,56 @@ export function checkBundle(bundle, { root, evidenceRoot, expectedManifestHash, 
   return [...new Set(errors)];
 }
 
-export function catalogErrors() {
+export function catalogErrors(definition = catalog, namedSets = sets) {
   const errors = [...schemaErrors(reportSchema), ...schemaErrors(manifestSchema)];
-  const ids = catalog.controls.map(item => item.id);
-  const listed = catalog.modules.flatMap(item => item.control_ids);
-  if (duplicates(ids) || duplicates(catalog.modules.map(item => item.id)) || duplicates(listed) || !same([...ids].sort(), [...listed].sort())) errors.push('Catalog membership mismatch');
-  for (const item of catalog.controls) {
-    if (!/^[A-Z][A-Z0-9_]*-[0-9]{2,}$/.test(item.id) || !catalog.modules.find(module => module.id === item.module_id)?.control_ids.includes(item.id)
-      || ![item.title, item.expected_outcome, item.research?.method, item.validation?.method].every(nonempty)
-      || item.research.permitted_mode !== 'read_only' || !item.applicability?.any_of?.length
-      || item.applicability.any_of.some(flag => flag !== 'all' && !catalog.feature_keys.includes(flag))
-      || !item.reference_ids?.length || item.reference_ids.some(id => !Object.hasOwn(catalog.references, id))) errors.push('Invalid catalog control');
-    if (!item.research.evidence_required?.length || !item.validation.evidence_required?.length || !nonempty(item.validation.authorization)
-      || !catalog.freshness_policies[item.freshness?.policy_ref] || !item.freshness?.invalidate_on?.length
-      || item.failure_significance?.default_severity !== 'unassessed' || item.failure_significance?.default_gate !== 'needs_review') errors.push('Incomplete or unsafe catalog validation contract');
-    if (typeof item.validation.negative_case_required !== 'boolean') errors.push('Missing negative-case policy');
+  const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+  const strings = value => Array.isArray(value) && value.length > 0 && value.every(nonempty) && !duplicates(value);
+  const version = value => typeof value === 'string' && /^\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?(?:\+[A-Za-z0-9.-]+)?$/.test(value);
+  if (!object(definition) || !nonempty(definition.catalog_id) || !version(definition.catalog_version)
+    || !strings(definition.feature_keys) || !Array.isArray(definition.modules) || !definition.modules.length
+    || !Array.isArray(definition.controls) || !definition.controls.length
+    || !object(definition.references) || !object(definition.freshness_policies)) return [...errors, 'Invalid catalog structure or version'];
+  if (reportSchema.properties.schema_version.const !== schemaVersion) errors.push('Record schema format mismatch');
+  const applies = rule => object(rule) && strings(rule.any_of)
+    && rule.any_of.every(flag => flag === 'all' || definition.feature_keys.includes(flag));
+  const modules = definition.modules.map(module => module?.id);
+  if (duplicates(modules)) errors.push('Duplicate module ID');
+  for (const module of definition.modules) {
+    if (!object(module) || !/^[A-Z][A-Z0-9_]*$/.test(module.id) || !nonempty(module.title) || !applies(module.applicability)) errors.push('Invalid module definition');
+    if (object(module) && Object.hasOwn(module, 'control_ids')) errors.push('Module membership is derived from control.module_id; remove control_ids');
   }
-  if (sets.catalog_version !== catalog.catalog_version) errors.push('Set version mismatch');
-  for (const name of Object.keys(sets.sets)) try { select([name]); } catch { errors.push('Invalid named set'); }
+  for (const [id, reference] of Object.entries(definition.references)) {
+    if (!nonempty(id) || !object(reference) || !nonempty(reference.title) || !nonempty(reference.url)) errors.push('Invalid catalog reference');
+  }
+  const ids = definition.controls.map(control => control?.id);
+  if (duplicates(ids)) errors.push('Duplicate control ID');
+  const fields = new Set(['id', 'module_id', 'title', 'applicability', 'expected_outcome', 'research', 'validation', 'failure_significance', 'freshness', 'reference_ids', 'false_positive_guidance']);
+  for (const [index, item] of definition.controls.entries()) {
+    const fail = message => errors.push(`${item?.id ?? 'control[' + index + ']'}: ${message}`);
+    if (!object(item)) { fail('Control must be an object'); continue; }
+    if (Object.keys(item).some(key => !fields.has(key))) fail('Unknown control field');
+    if (!/^[A-Z][A-Z0-9_]*-[0-9]{2,}$/.test(item.id) || !modules.includes(item.module_id)
+      || !item.id.startsWith(item.module_id + '-')) fail('Invalid control ID or module');
+    if (!nonempty(item.title) || !nonempty(item.expected_outcome) || !applies(item.applicability)) fail('Missing title, outcome or known applicability');
+    if (!object(item.research) || !nonempty(item.research.method) || item.research.permitted_mode !== 'read_only'
+      || !strings(item.research.evidence_required)) fail('Research requires a read-only method and evidence requirements');
+    if (!object(item.validation) || !nonempty(item.validation.method) || !strings(item.validation.evidence_required)
+      || !nonempty(item.validation.authorization) || typeof item.validation.negative_case_required !== 'boolean') fail('Validation requires a method, evidence, authorization and explicit negative-case policy');
+    if (!strings(item.reference_ids) || item.reference_ids.some(id => !Object.hasOwn(definition.references, id))) fail('Unknown or missing guidance reference');
+    if (!object(item.freshness) || !Object.hasOwn(definition.freshness_policies, item.freshness.policy_ref)
+      || !object(definition.freshness_policies[item.freshness.policy_ref]) || !strings(item.freshness.invalidate_on)) fail('Missing freshness policy or invalidation triggers');
+    if (!object(item.failure_significance) || !strings(item.failure_significance.assess)
+      || item.failure_significance.default_severity !== 'unassessed' || item.failure_significance.default_gate !== 'needs_review') fail('Unsafe failure defaults or missing assessment criteria');
+    if (Object.hasOwn(item, 'false_positive_guidance') && !nonempty(item.false_positive_guidance)) fail('Empty false-positive guidance');
+  }
+  if (!object(namedSets) || !version(namedSets.version) || !object(namedSets.sets)) return [...errors, 'Invalid named-set structure'];
+  if (Object.hasOwn(namedSets, 'catalog_version')) errors.push('Named sets have an independent version; remove catalog_version');
+  if (!same(namedSets.sets.all, ['*'])) errors.push('The all set must include every control using ["*"]');
+  for (const [name, selectors] of Object.entries(namedSets.sets)) {
+    if (!/^[a-z][a-z0-9-]*$/.test(name) || !strings(selectors)
+      || selectors.some(id => id !== '*' && !ids.includes(id) && !modules.includes(id))) errors.push(`Invalid named set: ${name}`);
+    else try { select([name], [], definition, namedSets); } catch { errors.push(`Empty or invalid named set: ${name}`); }
+  }
   return errors;
 }
 

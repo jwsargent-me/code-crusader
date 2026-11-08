@@ -1,6 +1,6 @@
-# Operating contract — v3.3
+# Operating contract
 
-The CLI is a standalone record/evidence validator and assessment aid, independent of plugins, skills and model providers. v3.3 adds explicit drill purpose/feedback, case-specific runtime proof and execution freshness, and operational scenario coverage. Historical v1/v2/v3.0/v3.1/v3.2 contracts stay preserved; old reports never silently gain current validation credit.
+The CLI is a standalone record/evidence validator and assessment aid, independent of plugins, skills and model providers. Current control data is in `catalog/controls.json`, named sets in `catalog/sets.json`, and the record structures in `schemas/manifest.json` and `schemas/assessment.json`. Catalog content and record-format versions are independent. Control IDs are checked against current catalog data, not enumerated into schemas. Module membership is derived from each control’s `module_id`; the `all` set includes every control.
 
 ## Scope and authorization
 
@@ -34,7 +34,7 @@ Use UTC RFC 3339 timestamps ending in Z, at most millisecond precision. Both exe
 
 Supporting execution time is checked against that interval independently of artifact capture. An old executed check cannot become current merely because its output was recaptured or the control was reassessed. Every positive and negative coverage check for a runtime pass must share runtime evidence with that control; an unrelated runtime-positive check cannot upgrade a source-only negative case. Artifacts may contain several cases, so the checker does not require one file per case or claim to verify their semantic contents.
 
-The 3.3.1 engine additionally requires each runtime exclusion check to share configuration or runtime evidence with the excluded control. Source-only feature assumptions do not establish deployed inapplicability. The evidence is bound to the declared deployment snapshot, but its real provenance and meaning still require review.
+Each runtime exclusion check must share configuration or runtime evidence with the excluded control. Source-only feature assumptions do not establish deployed inapplicability. The evidence is bound to the declared deployment snapshot, but its real provenance and meaning still require review.
 
 A `validated_pass` needs known applicability, current linked evidence/checks, no unresolved or contradictory checks/findings, empty remaining validation, and explicit positive/negative coverage. Negative cases must use distinct checks. A substantive rationale may exempt a negative case only where `validation.negative_case_required` is false. Security boundaries marked true require an executed negative case. Runtime passes also need linked runtime evidence; source-scoped passes cannot satisfy a requested runtime verification.
 
@@ -44,7 +44,7 @@ Confirmed/refuted findings need conclusive checks linked to that exact finding a
 
 ## Record checks and completion
 
-Continued reviews may reference an original v3.1/v3.2/v3.3 research bundle as a hash-checked configuration artifact. A control's `prior_assessment.report_evidence_id` identifies that artifact. Original project, source/environment, feature facts, any prior Git binding, control requirements, disposition, evidence, findings and assessment time must match exactly. The original must precede the new run and must not itself be carried. Only original assessed research dispositions can be retained; no unassessed result, validated result, changed conclusion or fabricated fresh timestamp can be carried. New or changed observations require fresh assessment. These references preserve provenance, not execution truth, current external facts, validation freshness or eligibility.
+Continued reviews may reference an original research bundle using the same current record format, catalog, sets and schema hashes as a hash-checked configuration artifact. A control's `prior_assessment.report_evidence_id` identifies that artifact. Original project, source/environment, feature facts, any prior Git binding, control requirements, disposition, evidence, findings and assessment time must match exactly. The original must precede the new run and must not itself be carried. Only original assessed research dispositions can be retained; no unassessed result, validated result, changed conclusion or fabricated fresh timestamp can be carried. New or changed observations require fresh assessment. These references preserve provenance, not execution truth, current external facts, validation freshness or eligibility.
 
 The report labels carried research explicitly. `report --controls ID,ID` or `--controls all` adds source rationale, evidence locators, remaining validation and historical origin for selected controls only. An empty unassessed list never substitutes for the remaining evidence/validation outcomes. Current source/artifact checks and research-only gate restrictions still apply.
 
@@ -60,7 +60,7 @@ Evidence, source and deployment assessments stay separate. Unselected assets, ex
 
 Git observations use fixed read-only built-ins with no shell, lazy fetch, replacement objects, hooks or cleanup. Unsupported Git options fail rather than falling back. Collection is bounded and rejects observed concurrent relevant ref/status changes. Ref fingerprints cover heads, remotes, tags and stash; other namespaces, including ephemeral tool checkpoints, are outside scope. Local remote-tracking refs may be stale; shallow history and unavailable upstreams remain explicit limitations. No count proves patch equivalence, ownership, hosted review/CI state, or deletion safety. Other worktrees are listed without inspecting their files.
 
-Run the offline suite, catalog check and generated-contract check after changes. The bundled schema subset fails on unsupported keywords/formats/reference siblings instead of ignoring constraints. It is not a general draft-2020-12 engine. Tests distinguish passes, failures and host-denied/skipped fixtures; synthetic success proves no live application behavior. Historical v1/v2/v3.0/v3.1/v3.2 bytes stay pinned.
+Run `node tools/verify.mjs` after changes. The catalog check rejects malformed controls, unsafe defaults and dangling references without generating files. The bundled schema subset fails on unsupported keywords/formats/reference siblings instead of ignoring constraints. It is not a general draft-2020-12 engine. Tests distinguish passes, failures and host-denied/skipped fixtures; synthetic success proves no live application behavior. Earlier source and contracts remain in Git. Pre-public legacy record readers are not bundled; unsupported records are rejected, and changed hashes require replanning.
 
 Preserve user checkouts and the required feature -> reviewed PR with passing CI -> develop -> reviewed release PR with passing CI -> main flow, with no staging branch. Package Git initialization, publication and bypasses require explicit approval. Disposable Git fixtures have no remote and are removed after testing; they do not initialize or publish this package. No future runs or standing permissions are implied.
 

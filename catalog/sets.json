@@ -1,6 +1,5 @@
 {
-  "version": "3.3.0",
-  "catalog_version": "3.3.0",
+  "version": "1.0.0",
   "sets": {
     "repository-hygiene": [
       "P",
@@ -29,25 +28,7 @@
       "S"
     ],
     "all": [
-      "A",
-      "B",
-      "C",
-      "D",
-      "E",
-      "F",
-      "G",
-      "H",
-      "I",
-      "J",
-      "K",
-      "L",
-      "M",
-      "N",
-      "O",
-      "P",
-      "Q",
-      "R",
-      "S"
+      "*"
     ]
   }
 }

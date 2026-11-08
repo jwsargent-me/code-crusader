@@ -1,7 +1,6 @@
 {
-  "schema_version": "3.0",
   "catalog_id": "project-assurance",
-  "catalog_version": "3.0.0",
+  "catalog_version": "3.4.0",
   "published_on": "2026-11-07",
   "purpose": "Self-contained on-demand review and evidence validation. No automatic certification, remediation, or release.",
   "feature_keys": [
@@ -129,17 +128,7 @@
         "any_of": [
           "all"
         ]
-      },
-      "control_ids": [
-        "A-01",
-        "A-02",
-        "A-03",
-        "A-04",
-        "A-05",
-        "A-06",
-        "A-07",
-        "A-08"
-      ]
+      }
     },
     {
       "id": "B",
@@ -148,17 +137,7 @@
         "any_of": [
           "identity"
         ]
-      },
-      "control_ids": [
-        "B-01",
-        "B-02",
-        "B-03",
-        "B-04",
-        "B-05",
-        "B-06",
-        "B-07",
-        "B-08"
-      ]
+      }
     },
     {
       "id": "C",
@@ -168,17 +147,7 @@
           "authorization",
           "multi_tenant"
         ]
-      },
-      "control_ids": [
-        "C-01",
-        "C-02",
-        "C-03",
-        "C-04",
-        "C-05",
-        "C-06",
-        "C-07",
-        "C-08"
-      ]
+      }
     },
     {
       "id": "D",
@@ -188,17 +157,7 @@
           "database",
           "object_storage"
         ]
-      },
-      "control_ids": [
-        "D-01",
-        "D-02",
-        "D-03",
-        "D-04",
-        "D-05",
-        "D-06",
-        "D-07",
-        "D-08"
-      ]
+      }
     },
     {
       "id": "E",
@@ -207,17 +166,7 @@
         "any_of": [
           "untrusted_input"
         ]
-      },
-      "control_ids": [
-        "E-01",
-        "E-02",
-        "E-03",
-        "E-04",
-        "E-05",
-        "E-06",
-        "E-07",
-        "E-08"
-      ]
+      }
     },
     {
       "id": "F",
@@ -227,17 +176,7 @@
           "http",
           "realtime"
         ]
-      },
-      "control_ids": [
-        "F-01",
-        "F-02",
-        "F-03",
-        "F-04",
-        "F-05",
-        "F-06",
-        "F-07",
-        "F-08"
-      ]
+      }
     },
     {
       "id": "G",
@@ -246,17 +185,7 @@
         "any_of": [
           "all"
         ]
-      },
-      "control_ids": [
-        "G-01",
-        "G-02",
-        "G-03",
-        "G-04",
-        "G-05",
-        "G-06",
-        "G-07",
-        "G-08"
-      ]
+      }
     },
     {
       "id": "H",
@@ -265,17 +194,7 @@
         "any_of": [
           "personal_data"
         ]
-      },
-      "control_ids": [
-        "H-01",
-        "H-02",
-        "H-03",
-        "H-04",
-        "H-05",
-        "H-06",
-        "H-07",
-        "H-08"
-      ]
+      }
     },
     {
       "id": "I",
@@ -285,17 +204,7 @@
           "consumer_product",
           "regulated_data"
         ]
-      },
-      "control_ids": [
-        "I-01",
-        "I-02",
-        "I-03",
-        "I-04",
-        "I-05",
-        "I-06",
-        "I-07",
-        "I-08"
-      ]
+      }
     },
     {
       "id": "J",
@@ -305,17 +214,7 @@
           "tracking",
           "communications"
         ]
-      },
-      "control_ids": [
-        "J-01",
-        "J-02",
-        "J-03",
-        "J-04",
-        "J-05",
-        "J-06",
-        "J-07",
-        "J-08"
-      ]
+      }
     },
     {
       "id": "K",
@@ -325,17 +224,7 @@
           "payments",
           "valuable_state"
         ]
-      },
-      "control_ids": [
-        "K-01",
-        "K-02",
-        "K-03",
-        "K-04",
-        "K-05",
-        "K-06",
-        "K-07",
-        "K-08"
-      ]
+      }
     },
     {
       "id": "L",
@@ -345,17 +234,7 @@
           "ai",
           "autonomous_actions"
         ]
-      },
-      "control_ids": [
-        "L-01",
-        "L-02",
-        "L-03",
-        "L-04",
-        "L-05",
-        "L-06",
-        "L-07",
-        "L-08"
-      ]
+      }
     },
     {
       "id": "M",
@@ -365,17 +244,7 @@
           "stateful",
           "background_jobs"
         ]
-      },
-      "control_ids": [
-        "M-01",
-        "M-02",
-        "M-03",
-        "M-04",
-        "M-05",
-        "M-06",
-        "M-07",
-        "M-08"
-      ]
+      }
     },
     {
       "id": "N",
@@ -384,17 +253,7 @@
         "any_of": [
           "user_interface"
         ]
-      },
-      "control_ids": [
-        "N-01",
-        "N-02",
-        "N-03",
-        "N-04",
-        "N-05",
-        "N-06",
-        "N-07",
-        "N-08"
-      ]
+      }
     },
     {
       "id": "O",
@@ -403,17 +262,7 @@
         "any_of": [
           "all"
         ]
-      },
-      "control_ids": [
-        "O-01",
-        "O-02",
-        "O-03",
-        "O-04",
-        "O-05",
-        "O-06",
-        "O-07",
-        "O-08"
-      ]
+      }
     },
     {
       "id": "P",
@@ -422,17 +271,7 @@
         "any_of": [
           "all"
         ]
-      },
-      "control_ids": [
-        "P-01",
-        "P-02",
-        "P-03",
-        "P-04",
-        "P-05",
-        "P-06",
-        "P-07",
-        "P-08"
-      ]
+      }
     },
     {
       "id": "Q",
@@ -441,13 +280,7 @@
         "any_of": [
           "all"
         ]
-      },
-      "control_ids": [
-        "Q-01",
-        "Q-02",
-        "Q-03",
-        "Q-04"
-      ]
+      }
     },
     {
       "id": "R",
@@ -456,18 +289,7 @@
         "any_of": [
           "all"
         ]
-      },
-      "control_ids": [
-        "R-01",
-        "R-02",
-        "R-03",
-        "R-04",
-        "R-05",
-        "R-06",
-        "R-07",
-        "R-08",
-        "R-09"
-      ]
+      }
     },
     {
       "id": "S",
@@ -476,11 +298,7 @@
         "any_of": [
           "all"
         ]
-      },
-      "control_ids": [
-        "S-01",
-        "S-02"
-      ]
+      }
     }
   ],
   "controls": [
@@ -2227,7 +2045,7 @@
       },
       "expected_outcome": "Markdown, SVG, rich text and generated HTML have context-appropriate sanitization.",
       "research": {
-        "method": "Inspect renderers, sanitizer configuration and permitted URL schemes.",
+        "method": "Inspect renderers, sanitizer configuration and permitted URL schemes. Trace dynamic text through email templates as well as browser sinks, including generated content, global writers and recipient ownership.",
         "evidence_required": [
           "Relevant source/configuration/business evidence with a precise locator and snapshot identity.",
           "An explicit statement of missing deployed or runtime evidence; absence of access is not proof of a gap."
@@ -2235,7 +2053,7 @@
         "permitted_mode": "read_only"
       },
       "validation": {
-        "method": "Render adversarial fixtures in an isolated test environment.",
+        "method": "Render adversarial fixtures in an isolated test environment. Render inert special-character/markup fixtures through real templates. Establish any crossed principal boundary; self-authored markup alone does not prove cross-user injection.",
         "evidence_required": [
           "Observed result, expected result, scope, environment, version and sanitized proof.",
           "Negative and positive cases where relevant; document untested paths and remaining limits."
@@ -2264,7 +2082,8 @@
       },
       "reference_ids": [
         "asvs"
-      ]
+      ],
+      "false_positive_guidance": "Unescaped text is not proof of browser-equivalent email XSS; trace writer authority, recipients and actual rendering."
     },
     {
       "id": "E-04",
@@ -3190,7 +3009,7 @@
       },
       "expected_outcome": "Release inputs, approval boundaries and published artifacts are attributable and controlled.",
       "research": {
-        "method": "Inspect branch policy, build inputs and artifact provenance.",
+        "method": "Inspect branch policy, build inputs and artifact provenance. Trace backend as well as frontend dependency resolution, direct and transitive identities, retained bundles and actual deploy-tool lock consumption.",
         "evidence_required": [
           "Relevant source/configuration/business evidence with a precise locator and snapshot identity.",
           "An explicit statement of missing deployed or runtime evidence; absence of access is not proof of a gap."
@@ -3198,7 +3017,7 @@
         "permitted_mode": "read_only"
       },
       "validation": {
-        "method": "Compare a declared release with commit and artifact metadata.",
+        "method": "Compare a declared release with commit and artifact metadata. Compare isolated clean build graphs with retained deployment artifacts; a lockfile that the deploy tool ignores is insufficient.",
         "evidence_required": [
           "Observed result, expected result, scope, environment, version and sanitized proof.",
           "Negative and positive cases where relevant; document untested paths and remaining limits."
@@ -3228,7 +3047,8 @@
       "reference_ids": [
         "asvs",
         "nist"
-      ]
+      ],
+      "false_positive_guidance": "Floating source imports do not prove a vulnerable SDK or changing live bundle. Retained build artifacts may supply a binding absent from the repository."
     },
     {
       "id": "G-07",
@@ -5520,7 +5340,7 @@
       },
       "expected_outcome": "Stale writes and concurrent changes follow an explicit conflict policy.",
       "research": {
-        "method": "Inspect revision checks, optimistic state and serialization.",
+        "method": "Inspect revision checks, optimistic state and serialization. Trace older retained writes against both newer still-pending and newer already-acknowledged peer writes. Inspect scalar, precise-index and full-column conflicts and session boundaries.",
         "evidence_required": [
           "Relevant source/configuration/business evidence with a precise locator and snapshot identity.",
           "An explicit statement of missing deployed or runtime evidence; absence of access is not proof of a gap."
@@ -5528,7 +5348,7 @@
         "permitted_mode": "read_only"
       },
       "validation": {
-        "method": "Run deterministic two-client conflict tests with disposable records.",
+        "method": "Run deterministic two-client conflict tests with disposable records. Use two-client synthetic sequences: fail A, acknowledge newer B, retry A. Cover permanent/transient errors, same/different fields and an explicit conflict policy without discarding unsaved work.",
         "evidence_required": [
           "Observed result, expected result, scope, environment, version and sanitized proof.",
           "Negative and positive cases where relevant; document untested paths and remaining limits."
@@ -5676,7 +5496,7 @@
       },
       "expected_outcome": "Jobs and queues track downstream completion, retries and terminal failures.",
       "research": {
-        "method": "Inspect scheduling, delivery, acknowledgments, dead letters and response correlation.",
+        "method": "Inspect scheduling, delivery, acknowledgments, dead letters and response correlation. Trace customer and operations jobs separately. Establish schedule, logical notification identity, retry-versus-reminder semantics and provider acceptance versus final delivery.",
         "evidence_required": [
           "Relevant source/configuration/business evidence with a precise locator and snapshot identity.",
           "An explicit statement of missing deployed or runtime evidence; absence of access is not proof of a gap."
@@ -5684,7 +5504,7 @@
         "permitted_mode": "read_only"
       },
       "validation": {
-        "method": "Test mocked failure paths and inspect approved historical execution evidence.",
+        "method": "Test mocked failure paths and inspect approved historical execution evidence. Use inert partial-success, accepted-but-response-lost, timeout and duplicate-invocation fixtures with bounded retries and defined cadence. Do not assume exactly-once inbox delivery.",
         "evidence_required": [
           "Observed result, expected result, scope, environment, version and sanitized proof.",
           "Negative and positive cases where relevant; document untested paths and remaining limits."
@@ -5714,7 +5534,8 @@
       "reference_ids": [
         "nist",
         "asvs"
-      ]
+      ],
+      "false_positive_guidance": "Repeated reminders can be intentional. Establish cadence and retry requirements before requiring durable identity or exactly-once behavior."
     },
     {
       "id": "M-07",
@@ -5728,7 +5549,7 @@
       },
       "expected_outcome": "Pagination, bulk operations and error handling do not silently omit or misrepresent data.",
       "research": {
-        "method": "Inspect page limits, aggregation, truncation and empty/error branches.",
+        "method": "Inspect page limits, aggregation, truncation and empty/error branches. Inspect complete enumeration across independent paginated sources and aggregate-before-limit ranking. Trace silent missing-identity skips and truthful partial-result accounting.",
         "evidence_required": [
           "Relevant source/configuration/business evidence with a precise locator and snapshot identity.",
           "An explicit statement of missing deployed or runtime evidence; absence of access is not proof of a gap."
@@ -5736,7 +5557,7 @@
         "permitted_mode": "read_only"
       },
       "validation": {
-        "method": "Use bounded synthetic datasets above page and batch boundaries.",
+        "method": "Use bounded synthetic datasets above page and batch boundaries. Place eligible items on final pages, fail a later page, and compare more-than-one-page aggregate/rank results with an independent complete-data oracle.",
         "evidence_required": [
           "Observed result, expected result, scope, environment, version and sanitized proof.",
           "Negative and positive cases where relevant; document untested paths and remaining limits."
@@ -5766,7 +5587,8 @@
       "reference_ids": [
         "nist",
         "asvs"
-      ]
+      ],
+      "false_positive_guidance": "Bounded results may cover a small cohort. Separate current impact from scale thresholds; a ranking error does not automatically invalidate billing or enforcement."
     },
     {
       "id": "M-08",
@@ -5931,7 +5753,7 @@
       },
       "expected_outcome": "Contrast, reflow, zoom, motion and non-color cues support intended users.",
       "research": {
-        "method": "Inspect styles, layout behavior and motion preferences.",
+        "method": "Inspect styles, layout behavior and motion preferences. Inspect decorative infinite animations, particles and preference-change handling; aria-hidden does not suppress visible motion.",
         "evidence_required": [
           "Relevant source/configuration/business evidence with a precise locator and snapshot identity.",
           "An explicit statement of missing deployed or runtime evidence; absence of access is not proof of a gap."
@@ -5939,7 +5761,7 @@
         "permitted_mode": "read_only"
       },
       "validation": {
-        "method": "Test stated WCAG criteria at relevant zoom and viewport settings.",
+        "method": "Test stated WCAG criteria at relevant zoom and viewport settings. Compare normal and reduced-motion settings on synthetic representative surfaces while preserving essential status feedback.",
         "evidence_required": [
           "Observed result, expected result, scope, environment, version and sanitized proof.",
           "Negative and positive cases where relevant; document untested paths and remaining limits."
@@ -5968,7 +5790,8 @@
       },
       "reference_ids": [
         "wcag"
-      ]
+      ],
+      "false_positive_guidance": "A motion observation does not establish full accessibility nonconformance or a flashing-threshold violation."
     },
     {
       "id": "N-04",
@@ -6629,6 +6452,59 @@
       ]
     },
     {
+      "id": "F-09",
+      "module_id": "F",
+      "title": "Public error confidentiality",
+      "applicability": {
+        "any_of": [
+          "http",
+          "realtime"
+        ]
+      },
+      "expected_outcome": "Public error responses avoid internal diagnostics, credential material and unnecessary private context while retaining useful stable error codes and safe correlation.",
+      "research": {
+        "method": "Trace public catch/error responses and upstream exception propagation, including API callers that bypass the UI. Compare related endpoints and client-side masking without inducing errors.",
+        "evidence_required": [
+          "Relevant source/configuration/business evidence with a precise locator and snapshot identity.",
+          "An explicit statement of missing deployed or runtime evidence; absence of access is not proof of a gap."
+        ],
+        "permitted_mode": "read_only"
+      },
+      "validation": {
+        "method": "Use inert provider/database stubs with synthetic private diagnostic markers; verify positive safe public errors and negative rejection of raw diagnostics without exposing real secrets or exercising production.",
+        "evidence_required": [
+          "Observed result, expected result, scope, environment, version and sanitized proof.",
+          "Negative and positive cases where relevant; document untested paths and remaining limits.",
+          "Public error payloads from permitted positive and negative fixtures, linked to the actual handler and exact source snapshot."
+        ],
+        "authorization": "A written validation scope must authorize each action and environment; production effects require explicit approval.",
+        "negative_case_required": true
+      },
+      "failure_significance": {
+        "assess": [
+          "Potential harm and affected principals",
+          "Exposure and exploit preconditions",
+          "Legal or contractual applicability where relevant",
+          "Compensating controls and recovery"
+        ],
+        "default_severity": "unassessed",
+        "default_gate": "needs_review"
+      },
+      "freshness": {
+        "policy_ref": "risk_based",
+        "invalidate_on": [
+          "Relevant source, dependency, configuration or deployment changes",
+          "Changed audience, data, geography, provider or business purpose",
+          "New vulnerability/advisory or incident affecting assumptions",
+          "Expired evidence or exception"
+        ]
+      },
+      "reference_ids": [
+        "asvs"
+      ],
+      "false_positive_guidance": "Generic UI copy does not establish API response confidentiality. A stable public error code or safe correlation identifier is not inherently a leak; establish the actual returned information and caller boundary."
+    },
+    {
       "id": "P-01",
       "module_id": "P",
       "title": "Checkout and work preservation",
@@ -6951,7 +6827,7 @@
       },
       "expected_outcome": "Retirement proposals preserve unique work, dirty files, stashes and dependent branches.",
       "research": {
-        "method": "Inspect reachability, patch equivalence, merged PRs, untracked work and dependent refs.",
+        "method": "Inspect reachability, patch equivalence, merged PRs, untracked work and dependent refs. Separate unique SHA reachability from patch equivalence, squashed integration, backup and owner intent. Cached refs are not current hosted state.",
         "evidence_required": [
           "Relevant source/configuration/business evidence with a precise locator and snapshot identity.",
           "An explicit statement of missing deployed or runtime evidence; absence of access is not proof of a gap."
@@ -6959,7 +6835,7 @@
         "permitted_mode": "read_only"
       },
       "validation": {
-        "method": "Independently reconcile scoped evidence with the expected outcome. Use permitted offline fixtures where decisive; record positive and negative cases and remaining limits. Runtime checks need separate authorization.",
+        "method": "Independently reconcile scoped evidence with the expected outcome. Use permitted offline fixtures where decisive; record positive and negative cases and remaining limits. Runtime checks need separate authorization. Use permitted read-only equivalence and retention evidence; no age/count/closed-PR heuristic can authorize retirement.",
         "evidence_required": [
           "Observed result, expected result, scope, environment, version and sanitized proof.",
           "Negative and positive cases where relevant; document untested paths and remaining limits.",
@@ -7263,7 +7139,7 @@
       },
       "expected_outcome": "Tests detect meaningful regressions across essential positive, negative and boundary behavior.",
       "research": {
-        "method": "Inspect assertions, skipped tests, mocks, error paths and linkage to user outcomes.",
+        "method": "Inspect assertions, skipped tests, mocks, error paths and linkage to user outcomes. Separate modeled handler assertions and SQL text guards from actual database grants, transactions and independent-session locking.",
         "evidence_required": [
           "Relevant source/configuration/business evidence with a precise locator and snapshot identity.",
           "An explicit statement of missing deployed or runtime evidence; absence of access is not proof of a gap."
@@ -7271,7 +7147,7 @@
         "permitted_mode": "read_only"
       },
       "validation": {
-        "method": "Independently reconcile scoped evidence with the expected outcome. Use permitted offline fixtures where decisive; record positive and negative cases and remaining limits. Runtime checks need separate authorization.",
+        "method": "Independently reconcile scoped evidence with the expected outcome. Use permitted offline fixtures where decisive; record positive and negative cases and remaining limits. Runtime checks need separate authorization. Exercise real permission/rollback/concurrency boundaries where claimed; show that a targeted weakened variant fails. Failed setup is inconclusive.",
         "evidence_required": [
           "Observed result, expected result, scope, environment, version and sanitized proof.",
           "Negative and positive cases where relevant; document untested paths and remaining limits.",
@@ -7315,7 +7191,7 @@
       },
       "expected_outcome": "Verification claims distinguish planned, attempted, executed, passed, failed, skipped and inconclusive work with exact provenance.",
       "research": {
-        "method": "Trace each claim to recorded checks, source identity, expected outcomes and sanitized actual results.",
+        "method": "Trace each claim to recorded checks, source identity, expected outcomes and sanitized actual results. Bind each verification claim to its actual engine, source and execution; a synchronous model cannot establish multi-session database locking.",
         "evidence_required": [
           "Relevant source/configuration/business evidence with a precise locator and snapshot identity.",
           "An explicit statement of missing deployed or runtime evidence; absence of access is not proof of a gap."
@@ -7323,7 +7199,7 @@
         "permitted_mode": "read_only"
       },
       "validation": {
-        "method": "Independently reconcile scoped evidence with the expected outcome. Use permitted offline fixtures where decisive; record positive and negative cases and remaining limits. Runtime checks need separate authorization.",
+        "method": "Independently reconcile scoped evidence with the expected outcome. Use permitted offline fixtures where decisive; record positive and negative cases and remaining limits. Runtime checks need separate authorization. Compare recorded assertions with their actual execution environment, including skipped fixtures and historical partial rehearsals.",
         "evidence_required": [
           "Observed result, expected result, scope, environment, version and sanitized proof.",
           "Negative and positive cases where relevant; document untested paths and remaining limits.",
@@ -7419,7 +7295,7 @@
       },
       "expected_outcome": "Production paths use real supported interfaces and avoid harmful duplication, dead scaffolding and unnecessary abstractions.",
       "research": {
-        "method": "Trace imports, callers, duplicated logic, placeholder implementations and dependency API usage.",
+        "method": "Trace imports, callers, duplicated logic, placeholder implementations and dependency API usage. Trace verification flags from untrusted input to every consumer. Separate client-reported telemetry from trusted entitlement or reward enforcement and inspect dormant feature activation.",
         "evidence_required": [
           "Relevant source/configuration/business evidence with a precise locator and snapshot identity.",
           "An explicit statement of missing deployed or runtime evidence; absence of access is not proof of a gap."
@@ -7427,7 +7303,7 @@
         "permitted_mode": "read_only"
       },
       "validation": {
-        "method": "Independently reconcile scoped evidence with the expected outcome. Use permitted offline fixtures where decisive; record positive and negative cases and remaining limits. Runtime checks need separate authorization.",
+        "method": "Independently reconcile scoped evidence with the expected outcome. Use permitted offline fixtures where decisive; record positive and negative cases and remaining limits. Runtime checks need separate authorization. Use arbitrary, absent, mismatched and replayed synthetic markers; verify independent entitlement/rate boundaries and the stated trust contract.",
         "evidence_required": [
           "Observed result, expected result, scope, environment, version and sanitized proof.",
           "Negative and positive cases where relevant; document untested paths and remaining limits.",
@@ -7458,7 +7334,7 @@
       "reference_ids": [
         "nist"
       ],
-      "false_positive_guidance": "Local similarity or abstraction count alone is not a defect; identify an incorrect behavior or maintenance burden."
+      "false_positive_guidance": "Local similarity or abstraction count alone is not a defect; identify an incorrect behavior or maintenance burden. A misleading verification label does not itself prove a paywall or entitlement bypass; establish consumers and active exposure."
     },
     {
       "id": "R-05",
@@ -7471,7 +7347,7 @@
       },
       "expected_outcome": "Schema, data and interface changes preserve supported versions and have a bounded rollout and recovery path.",
       "research": {
-        "method": "Inspect migration order, old/new client compatibility, backfills, partial failure and destructive steps.",
+        "method": "Inspect migration order, old/new client compatibility, backfills, partial failure and destructive steps. Distinguish clean bootstrap, upgrade from an applied history, and restore/recovery. Compare duplicate objects and historical edits without replaying SQL during research.",
         "evidence_required": [
           "Relevant source/configuration/business evidence with a precise locator and snapshot identity.",
           "An explicit statement of missing deployed or runtime evidence; absence of access is not proof of a gap."
@@ -7479,7 +7355,7 @@
         "permitted_mode": "read_only"
       },
       "validation": {
-        "method": "Independently reconcile scoped evidence with the expected outcome. Use permitted offline fixtures where decisive; record positive and negative cases and remaining limits. Runtime checks need separate authorization.",
+        "method": "Independently reconcile scoped evidence with the expected outcome. Use permitted offline fixtures where decisive; record positive and negative cases and remaining limits. Runtime checks need separate authorization. Use disposable database fixtures for the untouched chain and an existing-schema upgrade; skipped migrations do not establish clean replay.",
         "evidence_required": [
           "Observed result, expected result, scope, environment, version and sanitized proof.",
           "Negative and positive cases where relevant; document untested paths and remaining limits.",
@@ -7510,7 +7386,7 @@
       "reference_ids": [
         "nist"
       ],
-      "false_positive_guidance": "No production migration is authorized; rollback may require forward recovery rather than reversing data loss."
+      "false_positive_guidance": "No production migration is authorized; rollback may require forward recovery rather than reversing data loss. Broken fresh replay need not break an already-migrated deployment. Avoid casually rewriting applied history."
     },
     {
       "id": "R-06",
@@ -7627,7 +7503,7 @@
       },
       "expected_outcome": "Validation identifies the relevant assets, dependencies, enforcement boundaries and unassessed surfaces before recommending scoped eligibility.",
       "research": {
-        "method": "Compare selected files, environments, controls and evidence with an independent system inventory; identify omitted paths and change-invalidation triggers.",
+        "method": "Compare selected files, environments, controls and evidence with an independent system inventory; identify omitted paths and change-invalidation triggers. Record whether the invocation assesses a consumer or drills the harness. In a drill, map consumer observations back to control coverage, false positives, evidence gaps and harness changes before proposing consumer work.",
         "evidence_required": [
           "Relevant source/configuration/business evidence with a precise locator and snapshot identity.",
           "An explicit statement of missing deployed or runtime evidence; absence of access is not proof of a gap."
@@ -7635,7 +7511,7 @@
         "permitted_mode": "read_only"
       },
       "validation": {
-        "method": "Independently reconcile scoped evidence with the expected outcome. Use permitted offline fixtures where decisive; record positive and negative cases and remaining limits. Runtime checks need separate authorization.",
+        "method": "Independently reconcile scoped evidence with the expected outcome. Use permitted offline fixtures where decisive; record positive and negative cases and remaining limits. Runtime checks need separate authorization. Reconcile every pilot finding to explicit harness feedback. Preserve historical source research and do not silently promote it to deployed facts.",
         "evidence_required": [
           "Observed result, expected result, scope, environment, version and sanitized proof.",
           "Negative and positive cases where relevant; document untested paths and remaining limits.",
@@ -7679,7 +7555,7 @@
       },
       "expected_outcome": "Validation gates reject unknown, skipped, contradictory, stale or unsupported evidence and bind completion to the approved scope.",
       "research": {
-        "method": "Inspect negative fixtures, gate exit semantics, schema support, evidence artifacts and current source/runtime identities.",
+        "method": "Inspect negative fixtures, gate exit semantics, schema support, evidence artifacts and current source/runtime identities. Inspect case-specific source/runtime proof and execution freshness separately from artifact recapture. Test source-only negative cases borrowed by a runtime-positive result.",
         "evidence_required": [
           "Relevant source/configuration/business evidence with a precise locator and snapshot identity.",
           "An explicit statement of missing deployed or runtime evidence; absence of access is not proof of a gap."
@@ -7687,7 +7563,7 @@
         "permitted_mode": "read_only"
       },
       "validation": {
-        "method": "Independently reconcile scoped evidence with the expected outcome. Use permitted offline fixtures where decisive; record positive and negative cases and remaining limits. Runtime checks need separate authorization.",
+        "method": "Independently reconcile scoped evidence with the expected outcome. Use permitted offline fixtures where decisive; record positive and negative cases and remaining limits. Runtime checks need separate authorization. Reject each false-pass fixture independently; require runtime proof for every claimed runtime case and prevent fresh artifacts from laundering old executions.",
         "evidence_required": [
           "Observed result, expected result, scope, environment, version and sanitized proof.",
           "Negative and positive cases where relevant; document untested paths and remaining limits.",

@@ -2,7 +2,7 @@
 import { readFileSync, statSync } from 'node:fs';
 import { catalog, sets, catalogErrors, plan, snapshot, hash, checkBundle, summarize } from '../src/core.mjs';
 
-const usage = `Project Assurance 3.3 — Node 20+, no packages or services
+const usage = `Code Crusader — Node 20+, no packages or services
 
   node bin/assurance.mjs catalog
   node bin/assurance.mjs list --select repository-hygiene [--exclude P-08]
