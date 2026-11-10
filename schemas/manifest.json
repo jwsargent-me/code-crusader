@@ -28,7 +28,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "3.3"
+      "const": "4.0"
     },
     "catalog_version": {
       "type": "string",
@@ -234,5 +234,5 @@
     }
   },
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:project-assurance:manifest:3.3"
+  "$id": "urn:project-assurance:manifest:4.0"
 }

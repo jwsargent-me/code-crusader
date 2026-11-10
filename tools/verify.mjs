@@ -16,7 +16,7 @@ export function testSummary(tap) {
 function main() {
   if (process.argv.length !== 2) throw new Error('Usage: node tools/verify.mjs');
   const cwd = fileURLToPath(new URL('../', import.meta.url));
-  for (const args of [['bin/assurance.mjs', 'catalog'], ['--test', '--test-reporter=tap']]) {
+  for (const args of [['bin/assurance.mjs', 'catalog'], ['examples/demo.mjs'], ['--test', '--test-reporter=tap']]) {
     const result = spawnSync(process.execPath, args, { cwd, encoding: 'utf8', timeout: 120000, maxBuffer: 8 * 1024 * 1024 });
     process.stdout.write(result.stdout ?? ''); process.stderr.write(result.stderr ?? '');
     if (result.status !== 0 || result.error) throw new Error('Package verification command failed or timed out');

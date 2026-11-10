@@ -43,7 +43,7 @@ Run the package checks with:
 node tools/verify.mjs
 ```
 
-Verification checks catalog authoring rules, both record schemas and synthetic self-tests, rejecting failures and skips. Git/junction fixtures need host permission to create disposable repositories and links. The CI matrix covers Windows/Linux and Node 20/24/26; hosted execution must be verified separately.
+Verification checks catalog/set authoring rules, record schemas, the demo and synthetic self-tests, rejecting failures and skips. Git/link fixtures need host permission to create disposable repositories and links. The CI matrix covers Windows/Linux and Node 20/24/26; hosted execution must be verified separately.
 
 ## Start a review
 
@@ -58,6 +58,8 @@ node bin/assurance.mjs report --input C:/private/review.json --root C:/path/to/a
 Templates begin with `not_assessed`, never automatic passes. A reviewer supplies dispositions, findings and evidence. Select modules (`C`), controls (`C-02`) or sets such as `application-quality`, `application-security` and `repository-hygiene`. Git controls also require `--git-base` and an existing local base ref.
 
 `inventory --root C:/path/to/app` lists tracked paths for scope review without reading their contents or fetching. It omits untracked/ignored files and does not establish whole-project coverage. Explicit source scope is limited to 1,000 files and 10 MiB per file; symlinks/junctions, traversal and directory paths are rejected.
+
+Fingerprinting is not inspection. Record sparse per-file `inspection_coverage` declarations in the report: whole or partial inspection (partial needs a scope note), and independent links to executed checks describing specific behavior. Omitted files remain uninspected with no execution links. Summaries distinguish these overlapping counts; a linked check never establishes whole-file test coverage or automatically grants a pass. See the [operating contract](docs/workflow-design.md).
 
 ## Understand the result
 
@@ -74,9 +76,13 @@ node bin/assurance.mjs verify --input C:/private/validation.json --root C:/path/
 
 Run `node bin/assurance.mjs --help` for all command options, including validation planning and evidence fingerprinting. A manifest hash must be retained when the scope is approved; deriving a new hash from an edited bundle does not authenticate approval.
 
-Validation needs current artifact-backed evidence and linked checks. Required negative cases cannot be replaced by a positive result. Source checks cannot establish runtime coverage, and recapturing an old result cannot refresh its execution. Private evidence is rehashed under an explicit evidence root; URLs are descriptive and never fetched.
+Validation needs current artifact-backed evidence and linked checks. Positive, negative and applicability checks declare their case roles; required negative coverage needs a distinct check and case description. The harness rejects copied positive cases, but a reviewer must still establish whether the described test exercises the failure condition. Exclusions require frozen feature facts establishing inapplicability; unknown applicability remains unresolved. Source checks cannot establish runtime coverage, and recapturing an old result cannot refresh its execution. Private evidence is rehashed under an explicit evidence root; URLs are descriptive and never fetched.
+
+`catalog` identifies installed contract labels and formats. Summaries, verification and Markdown reports expose bound catalog/record versions and contract hashes, plus unfinished checks, cleanup and outstanding controls; research exclusions still need validation.
 
 The harness does not execute application tests, authenticate authorization declarations, establish artifact truth, automatically redact text or approve releases. A successful scoped record does not certify complete security. Keep private reports, credentials and raw evidence outside the repository.
+
+Optional `reviewer_observations` capture harness/process suggestions outside drills without providing validation or drill credit. Findings distinguish overlapping incomplete work, defects and unsupported claims, with evidence-backed acknowledgment and exact claim references where relevant. Documented unfinished work remains a gap when required; acknowledgment is not risk acceptance or a gate exemption. See the operating contract for field rules.
 
 For assessment fields, validation requirements, carry-forward rules, Git observations and harness drills, read the [operating contract](docs/workflow-design.md) and current [assessment schema](schemas/assessment.json). The [pilot retrospective](docs/pilot-retrospective.md) explains the synthetic regressions behind several validation boundaries.
 
