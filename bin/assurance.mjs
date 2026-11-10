@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { readFileSync, statSync } from 'node:fs';
-import { catalog, sets, catalogErrors, plan, snapshot, hash, checkBundle, summarize } from '../src/core.mjs';
+import { catalog, sets, contractIdentity, catalogErrors, plan, snapshot, hash, checkBundle, summarize } from '../src/core.mjs';
 
-const usage = `Project Assurance 3.3 — Node 20+, no packages or services
+const usage = `Code Crusader — Node 20+, no packages or services
 
   node bin/assurance.mjs catalog
   node bin/assurance.mjs list --select repository-hygiene [--exclude P-08]
@@ -12,7 +12,7 @@ const usage = `Project Assurance 3.3 — Node 20+, no packages or services
     [--purpose project-assessment|harness-drill]
     [--features features.json] [--validity-days N --validity-policy REF]
     [--target source|runtime --revision COMMIT --environment NAME --deployment ID]
-    [--git-base refs/heads/develop required for P controls]
+    [--git-base refs/heads/develop when selected controls require Git]
     [--files-from files.json instead of --files]
   node bin/assurance.mjs fingerprint --root PATH --files-from files.json
   node bin/assurance.mjs check --input bundle.json --root PATH [--evidence-root PATH]
@@ -64,7 +64,7 @@ try {
     };
     const errors = catalogErrors();
     if (errors.length) { output({ errors }); process.exitCode = 1; }
-    else if (command === 'catalog') output({ catalog_version: catalog.catalog_version, controls: catalog.controls.length, modules: catalog.modules.length, sets: Object.keys(sets.sets), errors: [] });
+    else if (command === 'catalog') output({ ...contractIdentity(), controls: catalog.controls.length, modules: catalog.modules.length, sets: Object.keys(sets.sets), errors: [] });
     else if (command === 'inventory') {
       requireFlags(['root']);
       const { trackedFiles } = await import('../src/git.mjs');
@@ -121,7 +121,7 @@ try {
   const safeMessages = ['Unknown command', 'Invalid arguments', 'Required argument missing', 'Choose one file-list input',
     'Unknown selector', 'Empty selection', 'Unknown feature key', 'Features must be an object', 'Invalid manifest hash', 'Invalid target',
     'Git observation unavailable', 'An explicit full base ref is required', 'Git observation exceeded its time budget', 'Git branch limit exceeded',
-    'Git state changed during observation', 'Select the exact Git working-tree root', 'Control appendix outside frozen scope'];
+    'Git state changed during observation', 'Git filter limit exceeded', 'Select the exact Git working-tree root', 'Control appendix outside frozen scope'];
   const detail = safeMessages.includes(error.message) || error.message?.startsWith('Invalid planning contract: ') ? error.message
     : 'Malformed input, unsafe path, or unavailable file/executable. Raw inputs withheld.';
   process.stderr.write('Unable to process command: ' + detail + ' Run help for usage.\n');

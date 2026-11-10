@@ -1,6 +1,6 @@
 # Code Crusader security reporting
 
-The review target is the current experimental engine and contracts. Historical contracts are retained for provenance, not supported as current validation engines. No formal support window or response-time commitment has been established.
+The review target is the current experimental engine and contracts. Only the installed record format and catalog are supported for current validation. Older source versions remain in Git; unsupported records must be replanned rather than relabeled. No formal support window or response-time commitment has been established.
 
 GitHub private vulnerability reporting is enabled for this repository. Use [Report a vulnerability](https://github.com/jwsargent-me/code-crusader/security/advisories/new) for sensitive findings. Do not place exploitable private-project findings, credentials, personal records or raw evidence in a public issue. Provide a minimal synthetic reproduction, exact version/environment, expected and actual validator behavior, and the affected trust boundary.
 
